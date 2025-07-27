@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>里山メタバース</title>
+    <!-- A‑Frame library from official CDN -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <!-- Optional extras: cursor and animation system -->
+    <script src="https://unpkg.com/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <a-scene background="color: #ECECEC" cursor="rayOrigin: mouse" shadow="type: basic">
+      <!-- Assets definitions -->
+      <a-assets>
+        <!-- Textures for ground, sky, soil and wood -->
+        <img id="grassTexture" src="assets/grass.png" />
+        <img id="skyTexture" src="assets/sky.png" />
+        <img id="soilTexture" src="assets/soil.png" />
+        <img id="woodTexture" src="assets/wood.png" />
+
+        <!-- Posters from user provided photographs -->
+        <img id="forest1" src="assets/forest1.jpeg" />
+        <img id="forest2" src="assets/forest2.jpeg" />
+        <img id="forest3" src="assets/forest3.jpeg" />
+        <img id="forest4" src="assets/forest4.jpeg" />
+        <img id="forest5" src="assets/forest5.jpeg" />
+        <img id="forest6" src="assets/forest6.jpeg" />
+        <img id="forest7" src="assets/forest7.jpeg" />
+        <img id="forest8" src="assets/forest8.jpeg" />
+        <img id="forest9" src="assets/forest9.jpeg" />
+
+        <!-- Satellite tile image for map board -->
+        <img id="satelliteMap" src="assets/satellite.jpg" />
+      </a-assets>
+
+      <!-- Sky -->
+      <a-sky src="#skyTexture" rotation="0 -90 0"></a-sky>
+
+      <!-- Vast ground plane with repeating grass texture -->
+      <a-plane
+        rotation="-90 0 0"
+        width="200"
+        height="200"
+        position="0 0 0"
+        material="src: #grassTexture; repeat: 50 50"
+        shadow
+      ></a-plane>
+
+      <!-- Farmland plane using soil texture next to the buildings -->
+      <a-plane
+        id="farmland"
+        rotation="-90 0 0"
+        width="12"
+        height="8"
+        position="-12 0 -8"
+        material="src: #soilTexture; repeat: 6 4"
+        shadow
+      ></a-plane>
+
+      <!-- Simple wooden house (平屋) with a tiled roof -->
+      <!-- Walls -->
+      <a-box
+        id="house"
+        width="6"
+        height="2.7"
+        depth="4.5"
+        position="0 1.35 -10"
+        material="src: #woodTexture; repeat: 2 1"
+        shadow
+      ></a-box>
+      <!-- Roof of the house (tiled, dark color) -->
+      <a-box
+        width="6.5"
+        height="0.4"
+        depth="5.0"
+        position="0 2.9 -10"
+        material="color: #4a4a4a"
+        shadow
+      ></a-box>
+
+      <!-- Warehouse: wooden pillars and corrugated metal roof -->
+      <!-- Body of the warehouse (open sided) -->
+      <a-box
+        id="warehouse"
+        width="7"
+        height="3"
+        depth="5"
+        position="10 1.5 -12"
+        material="src: #woodTexture; repeat: 2 1"
+        opacity="0.85"
+        shadow
+      ></a-box>
+      <!-- Corrugated metal roof on warehouse -->
+      <a-box
+        width="7.5"
+        height="0.3"
+        depth="5.5"
+        position="10 3.3 -12"
+        material="color: #7f8c8d"
+        shadow
+      ></a-box>
+      <!-- Wooden pillars for warehouse corners -->
+      <a-cylinder radius="0.1" height="3" position="6.7 1.5 -9.7" color="#8b5a2b" shadow></a-cylinder>
+      <a-cylinder radius="0.1" height="3" position="13.3 1.5 -9.7" color="#8b5a2b" shadow></a-cylinder>
+      <a-cylinder radius="0.1" height="3" position="6.7 1.5 -14.3" color="#8b5a2b" shadow></a-cylinder>
+      <a-cylinder radius="0.1" height="3" position="13.3 1.5 -14.3" color="#8b5a2b" shadow></a-cylinder>
+
+      <!-- Simple dirt road between house and warehouse -->
+      <a-plane
+        rotation="-90 0 0"
+        width="4"
+        height="15"
+        position="5 0 -10"
+        material="color: #7a5230"
+        shadow
+      ></a-plane>
+
+      <!-- Information board explaining the artificial cedar/cypress forest and the concept of satoyama -->
+      <!-- The board is positioned near the house so visitors can learn about the context of this landscape -->
+      <a-plane
+        id="infoPlane"
+        width="8"
+        height="2.5"
+        position="-2 2 -6"
+        rotation="0 15 0"
+        material="color: #ffffff; opacity: 0.85"
+        shadow
+      >
+        <!-- Text on the information board (Japanese). The wrap-count controls how many characters per line. -->
+        <a-text
+          value="里山へようこそ！この空間はNPO法人が活動している人工林を再現しています。ここでは杉やヒノキなどの針葉樹が中心で、紅葉がないのが特徴です。第二次世界大戦後、広葉樹の代わりに木材需要に応えるため杉やヒノキを植栽する政策がとられ、植林地は日本の森林の約40％を占めるようになりました。針葉樹の人工林が拡大したことで、里山の紅葉が少なくなっています。里山とは、人の暮らしと結びついて管理された二次林を指します。目の前には古民家、畑、倉庫があり、奥には杉・ヒノキの森が広がっています。"
+          color="#222222"
+          width="7.5"
+          align="left"
+          baseline="top"
+          wrap-count="40"
+          position="-3.5 1.1 0.05"
+        ></a-text>
+      </a-plane>
+
+      <!-- Trees: generated using cylinders for trunks and cones for foliage (cedar/cypress) -->
+      <a-entity id="trees"></a-entity>
+
+      <!-- Posters: user photographs displayed as gallery along the path -->
+      <a-plane
+        src="#forest1"
+        width="3"
+        height="2"
+        position="-4 1.5 -4"
+        rotation="0 25 0"
+        material="side: double"
+      ></a-plane>
+      <a-plane
+        src="#forest2"
+        width="3"
+        height="2"
+        position="-6 1.5 -7"
+        rotation="0 30 0"
+        material="side: double"
+      ></a-plane>
+      <a-plane
+        src="#forest3"
+        width="3"
+        height="2"
+        position="-8 1.5 -10"
+        rotation="0 30 0"
+        material="side: double"
+      ></a-plane>
+      <a-plane
+        src="#forest4"
+        width="3"
+        height="2"
+        position="-10 1.5 -13"
+        rotation="0 30 0"
+        material="side: double"
+      ></a-plane>
+
+      <!-- Satellite map board showing the surrounding landscape -->
+      <a-plane
+        src="#satelliteMap"
+        width="5"
+        height="5"
+        position="4 2.5 -4"
+        rotation="0 -20 0"
+        material="side: double"
+      ></a-plane>
+
+      <!-- Camera rig with WASD controls for navigation -->
+      <a-entity position="0 1.6 5">
+        <a-camera
+          wasd-controls-enabled="true"
+          look-controls="pointerLockEnabled: true"
+          near="0.1"
+          far="1000"
+        ></a-camera>
+      </a-entity>
+
+      <!-- Simple lighting -->
+      <a-entity light="type: ambient; intensity: 0.5"></a-entity>
+      <a-entity light="type: directional; intensity: 0.8" position="0 10 0" rotation="-90 0 0" castShadow="true"></a-entity>
+
+      <!-- Script to procedurally generate trees and any interactive behaviors -->
+      <script>
+        // Generate a number of trees and add them to the scene. Each tree consists of a trunk (cylinder) and foliage (cone).
+        AFRAME.registerComponent('tree-generator', {
+          init: function () {
+            const sceneEl = this.el;
+            const treeCount = 40;
+            for (let i = 0; i < treeCount; i++) {
+              // Random position around the origin but outside of the immediate building area
+              const x = (Math.random() - 0.5) * 180;
+              const z = (Math.random() - 0.5) * 180;
+              // Avoid spawning near the house, warehouse or farmland (rough exclusion box)
+              if (
+                (x > -15 && x < 15 && z < 0 && z > -20) || // area around buildings
+                (x > -18 && x < 2 && z > -12 && z < 0) // farmland and road
+              ) {
+                i--;
+                continue;
+              }
+              // Trunk
+              const trunk = document.createElement('a-cylinder');
+              trunk.setAttribute('radius', 0.25 + Math.random() * 0.05);
+              trunk.setAttribute('height', 6 + Math.random() * 2);
+              trunk.setAttribute('position', `${x} ${trunk.getAttribute('height') / 2} ${z}`);
+              trunk.setAttribute('color', '#5c3a21');
+              trunk.setAttribute('shadow', '');
+
+              // Canopy
+              const foliage = document.createElement('a-cone');
+              foliage.setAttribute('radius-bottom', 1.2 + Math.random() * 0.3);
+              foliage.setAttribute('radius-top', 0.1);
+              foliage.setAttribute('height', 4 + Math.random() * 1);
+              const trunkHeight = trunk.getAttribute('height');
+              foliage.setAttribute(
+                'position',
+                `${x} ${trunkHeight + foliage.getAttribute('height') / 2 - 0.5} ${z}`
+              );
+              foliage.setAttribute('color', '#355e3b');
+              foliage.setAttribute('shadow', '');
+
+              sceneEl.appendChild(trunk);
+              sceneEl.appendChild(foliage);
+            }
+          }
+        });
+
+        // Attach the tree generator to the scene once the scene is loaded.
+        document.addEventListener('DOMContentLoaded', function () {
+          const treeContainer = document.querySelector('#trees');
+          treeContainer.setAttribute('tree-generator', '');
+        });
+      </script>
+    </a-scene>
+  </body>
+</html>
